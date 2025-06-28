@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		55B458262E0FD80F00C223DC /* IrohLib in Frameworks */ = {isa = PBXBuildFile; productRef = 55B458252E0FD80F00C223DC /* IrohLib */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		5542B99C2E0AEEC90056B7CE /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -35,6 +39,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				55B458262E0FD80F00C223DC /* IrohLib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,6 +50,7 @@
 			isa = PBXGroup;
 			children = (
 				5542B9A02E0AEEC90056B7CE /* irohtest */,
+				5542B9D22E0AF4500056B7CE /* Frameworks */,
 				5542B99F2E0AEEC90056B7CE /* Products */,
 			);
 			sourceTree = "<group>";
@@ -55,6 +61,13 @@
 				5542B99E2E0AEEC90056B7CE /* irohtest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		5542B9D22E0AF4500056B7CE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -77,6 +90,7 @@
 			);
 			name = irohtest;
 			packageProductDependencies = (
+				55B458252E0FD80F00C223DC /* IrohLib */,
 			);
 			productName = irohtest;
 			productReference = 5542B99E2E0AEEC90056B7CE /* irohtest */;
@@ -106,6 +120,9 @@
 			);
 			mainGroup = 5542B9952E0AEEC90056B7CE;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				55B458242E0FD80F00C223DC /* XCLocalSwiftPackageReference "../../iroh/iroh-ffi/IrohLib" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 5542B99F2E0AEEC90056B7CE /* Products */;
 			projectDirPath = "";
@@ -253,6 +270,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6X6J2FF354;
 				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -264,6 +282,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6X6J2FF354;
 				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.6;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -291,6 +310,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		55B458242E0FD80F00C223DC /* XCLocalSwiftPackageReference "../../iroh/iroh-ffi/IrohLib" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../iroh/iroh-ffi/IrohLib";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		55B458252E0FD80F00C223DC /* IrohLib */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = IrohLib;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 5542B9962E0AEEC90056B7CE /* Project object */;
 }
