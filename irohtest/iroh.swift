@@ -154,7 +154,6 @@ class IrohGossipApp {
 @main
 struct IrohGossipMain {
     static func main() async {
-        //print("hello wold")
         //IrohLib.setLogLevel(level: .info)
 
         do {
