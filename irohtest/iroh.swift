@@ -52,7 +52,6 @@ class MyGossipCallback: GossipMessageCallback {
     func onMessage(msg: Message) {
         // Attempt to decode the message content as a UTF-8 string.
         let type = msg.type()
-        print("type :\(type)")
         
         if type == MessageType.received {
             let content = msg.asReceived()
@@ -68,6 +67,8 @@ class MyGossipCallback: GossipMessageCallback {
             }
             
 
+        } else if type == MessageType.joined {
+            print("\nSuccessfully joined topic")
         }
     }
 }
@@ -115,7 +116,6 @@ class IrohGossipApp {
             bootstrap: [],
             cb: MyGossipCallback()
         )
-        print("[App] Successfully joined gossip topic: \(topicID)")
 
     }
     
@@ -154,19 +154,20 @@ class IrohGossipApp {
 @main
 struct IrohGossipMain {
     static func main() async {
-        //IrohLib.setLogLevel(level: .info)
 
         do {
             let app = try await IrohGossipApp()
 
             let chatTopic = "fbfdf8a045484d2f57bb678ffb792e0db647aa1c996e559937d6529aefdbf5bf"
 
-            //try await app.joinGossipTopic(topicID: chatTopic)
+            if CommandLine.arguments.count != 3 {
+                try await app.joinGossipTopic(topicID: chatTopic)
+            } else {
+                let nodeAddr = CommandLine.arguments[1]
+                let destIpAddr = CommandLine.arguments[2]
 
-            let nodeAddr = "cff7ff775a62afd82d24458e1451d90b2d270176bd46683a6bd3c73f84c90293"
-            let destIpAddr = "10.4.12.154:51428"
-
-            try await app.joinGossipTopicWithNodeAddr(topicID: chatTopic, nodeAddr: nodeAddr, ipAddr: destIpAddr)
+                try await app.joinGossipTopicWithNodeAddr(topicID: chatTopic, nodeAddr: nodeAddr, ipAddr: destIpAddr)
+            }
 
             // Loop to send messages
             while true {
