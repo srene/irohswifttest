@@ -1,6 +1,7 @@
 import Foundation
 import IrohLib
 
+// only to convert hex format topic id from string to Data. created by AI. maybe not really ncessary.
 extension String {
     /// Converts a hexadecimal string (e.g., "01af", "0x01af", "01 AF") to Data.
     ///
@@ -46,18 +47,15 @@ extension String {
     }
 }
 
-
+// callback used to receive gossip events once joined
 class MyGossipCallback: GossipMessageCallback {
     // This method is invoked by the Rust core whenever a new message is received.
     func onMessage(msg: Message) {
-        // Attempt to decode the message content as a UTF-8 string.
-        let type = msg.type()
         
-        if type == MessageType.received {
+        //do some actions depending on message type received
+        if msg.type() == MessageType.received {
             let content = msg.asReceived()
             // Print the received message to the console.
-            let data =  String(data: content.content, encoding: .utf8)
-           
             if let textString = String(data: content.content, encoding: .utf8) {
                 print("\n[Received]: \(textString)")
                 print("> ", terminator: "")
@@ -65,9 +63,8 @@ class MyGossipCallback: GossipMessageCallback {
             } else {
                 print("Could not convert data to string.")
             }
-            
-
-        } else if type == MessageType.joined {
+        // confirm node joined the group
+        } else if msg.type() == MessageType.joined {
             print("\nSuccessfully joined topic")
         }
     }
@@ -106,7 +103,7 @@ class IrohGossipApp {
 
     }
     
-    /// Joins a specified gossip topic.
+    /// Joins a specified gossip topic without bootsrap node (useful for first node)
     /// - Parameter topicID: The ID of the topic to join.
     func joinGossipTopic(topicID: String) async throws {
 
@@ -119,31 +116,43 @@ class IrohGossipApp {
 
     }
     
-    func joinGossipTopicWithNodeAddr(topicID: String, nodeAddr: String, ipAddr: String) async throws {
+    /// Joins a specified gossip topic using as bootstrap node the node idenfitfied by
+    /// - Parameter topicID: The ID of the topic to join.
+    /// - Parameter nodeId: The iroh id used as node identifier for the bootstrap node.
+    /// - Parameter ipPort: ip:port string to connect to bootstrap node.
+    func joinGossipTopicWithNodeAddr(topicID: String, nodeId: String, ipPort: String) async throws {
 
-        let nodeKey = try IrohLib.PublicKey.fromString(s:nodeAddr)
-        let irohAddr = IrohLib.NodeAddr(nodeId: nodeKey, derpUrl: nil, addresses: [ipAddr])
-        
+        // create nodeKey from string id
+        let nodeKey = try IrohLib.PublicKey.fromString(s:nodeId)
+        // create NodeAddr from info
+        let irohAddr = IrohLib.NodeAddr(nodeId: nodeKey, derpUrl: nil, addresses: [ipPort])
+        // add bootstrap node addr to local Iroh instance
         try await node.net().addNodeAddr(addr: irohAddr)
         print("[App] Attempting to join gossip topic: \(topicID)")
+        
+        // join gossip topic using bootstrap node info
         self.gossipSender = try await gossip.subscribe(
             topic: topicID.hexToData()!,
-            bootstrap: [nodeAddr],
+            bootstrap: [nodeId],
             cb: MyGossipCallback()
         )
         print("[App] Successfully joined gossip topic: \(topicID)")
 
     }
     
+    /// Broadcasts a text message to the gossip broup
+    /// - Parameter message: String message to send
     func sendMessage(message: String) async throws {
 
         print("[App] Sending message: \"\(message)\"")
 
+        // create message
         guard let data = message.data(using: .utf8) else {
             print("[App] Failed to encode message to Data.")
             return
         }
 
+        // broadcast message to gossip topic
         try await self.gossipSender?.broadcast(msg: data)
 
         print("[App] Message sent.")
@@ -160,13 +169,15 @@ struct IrohGossipMain {
 
             let chatTopic = "fbfdf8a045484d2f57bb678ffb792e0db647aa1c996e559937d6529aefdbf5bf"
 
+            // if args are set use them to connect to bootstrap node, otherwise be the bootstrap.
             if CommandLine.arguments.count != 3 {
+                //join topic
                 try await app.joinGossipTopic(topicID: chatTopic)
             } else {
-                let nodeAddr = CommandLine.arguments[1]
-                let destIpAddr = CommandLine.arguments[2]
-
-                try await app.joinGossipTopicWithNodeAddr(topicID: chatTopic, nodeAddr: nodeAddr, ipAddr: destIpAddr)
+                let nodeId = CommandLine.arguments[1]
+                let destIpPort = CommandLine.arguments[2]
+                //join topic using bootstrap
+                try await app.joinGossipTopicWithNodeAddr(topicID: chatTopic, nodeId: nodeId, ipPort: destIpPort)
             }
 
             // Loop to send messages
